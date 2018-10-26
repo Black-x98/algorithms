@@ -1,63 +1,71 @@
-#include<set>
-#include<map>
-#include<cmath>
-#include<queue>
-#include<stack>
-#include<vector>
-#include<cctype>
-#include<cstdio>
-#include<string>
-#include<sstream>
-#include<cstring>
-#include<cstdlib>
-#include<fstream>
-#include<iterator>
-#include<iostream>
-#include<algorithm>
-#include<cassert>
-#include<ctime>
+#include <stdio.h>
+#include <queue>
+
 
 using namespace std;
 
-
-#define inf (1<<29)
-#define ii64 long long
-#define MX 33
-
-
-ii64 dp[MX][2];
-int visited[MX][2];
-
-ii64 DP_func(int n,int pre_tile){
-    if(n==0) return 1;
-
-    if(visited[n][pre_tile]==1) return dp[n][pre_tile];
-
-
-    ii64 result=0;
-
-    if(pre_tile==false){
-        result+=DP_func(n-1,true);
+struct item{
+    double w,p,rat;
+    item(){}
+    item(int _w, int _p){
+        w = _w;
+        p = _p;
+        rat=p/w;
     }
-    result+=DP_func(n-1,false);
-    result+=DP_func(n-1,false);
+    bool operator <(const item &a)const
+    {
+        return rat < a.rat;
+    }
 
-    visited[n][pre_tile]=1;
-    return dp[n][pre_tile] = result;
+    bool operator >(const item &a)const
+    {
+        return rat > a.rat;
+    }
+};
 
-}
+priority_queue<item, vector<item>, less<item> > qqq;
+int t;
+int n,c;
+double cnt=0,wt[33]={0},pr[33]={0},rat[33];
+
 
 
 main(){
-    int t,n;
-    ii64 result;
+
     scanf("%d",&t);
-    while(t--){
-        scanf("%d",&n);
-        memset(visited,0,sizeof(visited));
-        result=DP_func(n,false);
-        printf("%lld\n",result);
+    for(int i=0;i<t;i++){
+        scanf("%d %d",&n,&c);
+        for(int i=0;i<n;i++){
+            scanf("%lf",&wt[i]);
+        }
+        for(int i=0;i<n;i++){
+            scanf("%lf",&pr[i]);
+        }
+        for(int i=0;i<n;i++){
+            qqq.push(item(wt[i],pr[i]));
+        }
+        double cap=c;
+        cnt=0;
+        for(int i=0;i<n&&cap>=0;i++){
+            item f=qqq.top();
+            qqq.pop();
+            //printf(" f w f p  %.2lf %.2lf\n",f.w,f.p);
+            if(cap>=f.w){
+                cnt+=f.p;
+                cap-=f.w;
+            }
+            else{
+                double left=cap/f.w;
+                cnt+=f.p*left;
+                cap-=f.w*left;
+            }
+            //printf("vitore %.2lf\n",cnt);
+        }
+        printf("%.2lf\n",cnt);
     }
+
     return 0;
 }
+
+
 

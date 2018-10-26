@@ -1,70 +1,64 @@
-#include<cmath>
-#include<cctype>
-#include<cstdio>
-#include<string.h>
-#include<cstdlib>
-#include<iostream>
-#include<algorithm>
-
+#include <stdio.h>
+#include <algorithm>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
-#define inf 400005
-
-int K[30001][301];
-
-int number=0;
-
-int flag=0;
-
-int val[305], wt[305];
+#define ii64 long long int
 
 
-int coin_change(int A,int n,int cnt){
-    printf("count == %d\nAmount left %d\nscanning coin %d\n",cnt,A,n);
-    if(flag==1){
-        return cnt;
+struct work{
+    ii64 s,e;
+    work(){}
+    work(int _s, int _e){
+        s = _s;
+        e = _e;
     }
-
-    int s1=inf, s2=inf;
-
-    if(A<=0||n==number){
-        flag=1;
-        return cnt;
-    }
-
-    if(A>=val[n]){
-        s1=coin_change(A-val[n],n+1,cnt+1);
-    }
-    printf("\nSWITCHING BRANCHES!!!!\n");
-    s2=coin_change(A,n+1,cnt);
-
-    return K[A][n]=min(s1,s2);
-
-}
-
-
-main()
-{
-    int t,n,A,i,j;
-
-    scanf("%d",&t);
-
-    while(t--)
+    bool operator <(const work &a)const
     {
-        scanf("%d %d",&n,&A);
+        return e < a.e;
+    }
 
-        number=n;
+    bool operator >(const work &a)const
+    {
+        return e > a.e;
+    }
+};
 
-        for(i=1; i<=n; i++)
-        {
-            scanf("%d",&val[i]);
+ii64 t;
+ii64 n,l[1005],r[1005],cnt=0;
+vector<work> arr;
+
+priority_queue<work, vector<work>, greater<work> > qqq;
+
+main(){
+    ii64 res=0;
+    ii64 fin=-1,str=0;
+    scanf("%lld",&t);
+    for(int i=0;i<t;i++){
+        scanf("%lld",&n);
+        for(int i=0;i<n;i++){
+            scanf("%lld",&l[i]);
         }
+        for(int i=0;i<n;i++){
+            scanf("%lld",&r[i]);
+        }
+        for(int i=0;i<n;i++){
+            qqq.push(work(l[i],r[i]));
+        }
+        cnt=0;
+        fin=0;
+        for(int i=0;i<n;i++){
+            work f=qqq.top();
+            qqq.pop();
 
-
-        flag=0;
-
-        printf("%d\n",coin_change(A,1,0));
+            if(fin<=f.s){
+                cnt++;
+                fin=f.e;
+            }
+        }
+        printf("%lld\n",cnt);
     }
 
     return 0;

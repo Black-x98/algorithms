@@ -1,57 +1,50 @@
 #include <stdio.h>
+#include <algorithm>
+
 
 using namespace std;
 
-int arr[300][300];
+#define ii64 long long int
+
+int t;
+ii64 n,a,val[33]={0},cnt=0;
 
 
-int max(int x,int y){
-
-    if(x>y){
-        return x;
+ii64 min_coin(){
+    std::sort(val,val+n);
+    if((a%val[0])!=0){
+        return -1;
     }
-    else{
-        return y;
-    }
-}
-
-int maxCost(int cost[][300],int N,int M){
-    int i,j;
-    int tc[N+1][M+1];
-    tc[0][0]=cost[0][0];
-
-    for(i=1;i<=N;i++){
-        tc[i][0] = tc[i-1][0] + cost[i][0];
-    }
-
-    for(j=1;j<=M;j++){
-        tc[0][j] = tc[0][j-1] + cost[0][j];
-    }
-
-    for(i=1;i<=N;i++){
-        for(j=1;j<=M;j++){
-            tc[i][j]=max(tc[i-1][j],tc[i][j-1]) + cost[i][j];
+    ii64 amount=a;
+    cnt=0;
+    ii64 m,took=0;
+    for(m=n-1;m>=0;m--){
+        if(amount>=val[m]){
+            took=(amount/val[m]);
+            cnt+=took;
+            amount-=took*val[m];
         }
     }
-    return tc[N-1][M-1];
+    return cnt;
 }
 
 
+main(){
+    ii64 res=0;
+    scanf("%lld",&t);
+    for(int i=0;i<t;i++){
+        scanf("%lld %lld",&n,&a);
+        for(int i=0;i<n;i++){
+            scanf("%lld",&val[i]);
+        }
+        res=min_coin();
+        if(res==-1){
+            printf("Impossible\n");
+        }
+        else{
+            printf("%lld\n",res);
+        }
+    }
 
-int main(){
-   int T,M,N,i,j,k;
-   int cost=0;
-   scanf("%d",&T);
-   while(T--){
-       scanf("%d %d",&N,&M);
-       for(i=0;i<N;i++){
-           for(j=0;j<M;j++){
-                scanf("%d",&arr[i][j]);
-           }
-       }
-       cost=maxCost(arr,N,M);
-       printf("%d\n",cost);
-   }
-   return 0;
-
+    return 0;
 }
